@@ -1,5 +1,8 @@
 package com.example.j2ee.entity;
 
+import io.swagger.annotations.ApiModel;
+
+@ApiModel("User class")
 public class User {
     private Integer id;
     private String username;
@@ -38,4 +41,15 @@ public class User {
         this.password = password;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        User user = (User) obj;
+
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
+        if (username != null ? !username.equals(user.username) : user.username != null) return false;
+        return password != null ? password.equals(user.password) : user.password == null;
+    }
 }
