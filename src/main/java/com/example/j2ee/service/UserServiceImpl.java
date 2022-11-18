@@ -1,10 +1,9 @@
 package com.example.j2ee.service;
 
 import com.example.j2ee.dataAccessObject.UserDao;
-import com.example.j2ee.dataAccessObject.UserDaoImpl;
+import com.example.j2ee.entity.FullUser;
 import com.example.j2ee.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,14 +21,12 @@ public class UserServiceImpl implements UserService {
         return user;
     }
     @Override
-    public User submitUser(String username, String password) {
-        User user = userDao.getUserByUsername(username);
-        if(user == null){
-            user = new User();
-            user.setUsername(username);
-            user.setPassword(password);
+    public String submitFullUser(FullUser fullUser) {
+        User user = userDao.getUserByEmail(fullUser.getEmail());
+        if(user.getUsername() == "invalid" && user.getId() == -1){
+            return userDao.submitDataBase(fullUser);
         }
-        return user;
+        return "Email already exists";
     }
     @Override
     public List<String> getUsernames() {

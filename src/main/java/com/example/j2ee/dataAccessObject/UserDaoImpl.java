@@ -1,5 +1,6 @@
 package com.example.j2ee.dataAccessObject;
 
+import com.example.j2ee.entity.FullUser;
 import com.example.j2ee.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -52,9 +53,9 @@ public class UserDaoImpl implements UserDao {
 
 
     @Override
-    public User getUserByUsername(String username) {
+    public User getUserByEmail(String email) {
         String sql = "select * from user where email = ?";
-        List<User> userList = jdbcTemplate.query(sql, new Object[]{username}, new UserMapper());
+        List<User> userList = jdbcTemplate.query(sql, new Object[]{email}, new UserMapper());
         if (userList.size() == 0) {
             return new User(-1, "invalid", "ok");
         }
@@ -62,8 +63,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User checkPassword(String username, String password) {
-        User user = getUserByUsername(username);
+    public User checkPassword(String email, String password) {
+        User user = getUserByEmail(email);
         if (user.equals(new User(-1, "invalid", "ok"))) {
             return new User(-1, "invalid", "ok");
         }
@@ -71,5 +72,21 @@ public class UserDaoImpl implements UserDao {
             return user;
         }
         return new User(-1, "ok", "invalid");
+    }
+
+    @Override
+    public String submitDataBase(FullUser fullUser) {
+        String code = fullUser.getCode();
+        String name = fullUser.getName();
+        String sql = "delete from activecode where code = ? and name = ?";
+        int result = jdbcTemplate.update(sql, new Object[]{code, name});
+        if (result == 0) {
+            return "Code is incorrect or not match";
+        }
+        String sql2 = "insert into user (username, phone, email,school,password,code, name,isAdmin) values (?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql2, new Object[]{fullUser.getUsername(), fullUser.getPassword(), fullUser.getEmail(), fullUser.getSchool(),
+                fullUser.getPassword(), fullUser.getCode(), fullUser.getName(), fullUser.getIsAdmin()});
+        return "success";
+
     }
 }

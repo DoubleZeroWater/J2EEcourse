@@ -1,8 +1,7 @@
 package com.example.j2ee.dataAccessObject;
 
+import com.example.j2ee.entity.FullUser;
 import com.example.j2ee.entity.User;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -17,8 +16,9 @@ public interface UserDao {
     List<String> getUsernameList();
 
     //根据用户名搜索用户
-    User getUserByUsername(String username);
+    User getUserByEmail(String username);
 
+    String submitDataBase(FullUser user);
     //检查密码
     User checkPassword(String username, String password);
 
