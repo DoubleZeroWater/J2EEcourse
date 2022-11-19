@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpSession;
+import java.util.Objects;
 
 @RestController
 @Api(tags = "登录接口")
@@ -89,11 +90,11 @@ public class LoginController
         try
         {
             String ans = userService.submitFullUser(fullUser);
-            if (ans == "Email already exists")
+            if (Objects.equals(ans, "Email already exists"))
             {
                 return ResponseEntity.status(210).body("Email already exists");
             }
-            else if (ans == "Code is incorrect or not match")
+            else if (Objects.equals(ans, "Code is incorrect or not match"))
             {
                 return ResponseEntity.status(220).body("Code is incorrect or not match");
             }
