@@ -18,6 +18,7 @@ public interface UserDao {
     //根据用户名搜索用户
     User getUserByEmail(String username);
 
+    FullUser getFullUserByEmail(String username);
     String submitDataBase(FullUser user);
     //检查密码
     User checkPassword(String username, String password);

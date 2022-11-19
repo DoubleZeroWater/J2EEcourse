@@ -1,23 +1,34 @@
 package com.example.j2ee.entity;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel("FullUser class")
-public class FullUser extends User {
-    private Integer id;
-    private String username;
-    private String phone;
-    private String email;
-    private String school;
-    private String password;
-    private String isAdmin;
-    private String code;
+@ApiModel("FullUser")
+public class FullUser{
+    @ApiModelProperty(name = "id", value = "数据表自增id")
+    public Integer id;
+    @ApiModelProperty(name = "username", value = "用户名")
+    public String username;
+    @ApiModelProperty(name = "phone", value = "手机号")
+    public String phone;
+    @ApiModelProperty(name = "email", value = "邮箱")
+    public String email;
+    @ApiModelProperty(name = "school", value = "学校")
+    public String school;
+    @ApiModelProperty(name = "password", value = "密码")
+    public String password;
+    @ApiModelProperty(name = "isAdmin", value = "是否为管理员(是为1，否为0)")
 
-    private String name;
+    public String isAdmin;
+    @ApiModelProperty(name = "code", value = "激活码")
+    public String code;
+
+    @ApiModelProperty(name = "name", value = "姓名")
+    public String name;
     public FullUser() {
     }
 
-    public FullUser(Integer id, String username, String phone, String email, String school, String password, String isAdmin, String code) {
+    public FullUser(Integer id, String username, String phone, String email, String school, String password, String isAdmin, String code, String name) {
         this.id = id;
         this.username = username;
         this.phone = phone;
@@ -26,6 +37,7 @@ public class FullUser extends User {
         this.password = password;
         this.isAdmin = isAdmin;
         this.code = code;
+        this.name = name;
     }
 
     public Integer getId() {

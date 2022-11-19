@@ -10,7 +10,10 @@ public interface UserService {
         //根据用户名密码获取用户
         User getUser(String username, String password);
         String submitFullUser(FullUser fullUser);
-        //获取用户名列表
+
+    FullUser getFullUser(String username);
+
+    //获取用户名列表
         List<String> getUsernames();
 
 }

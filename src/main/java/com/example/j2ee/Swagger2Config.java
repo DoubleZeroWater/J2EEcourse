@@ -24,7 +24,7 @@ public class Swagger2Config {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.example.j2ee"))//设定扫描范围
                 .paths(PathSelectors.any())
-                .build();
+                .build().useDefaultResponseMessages(false);
     }
 
     private ApiInfo apiInfo() {

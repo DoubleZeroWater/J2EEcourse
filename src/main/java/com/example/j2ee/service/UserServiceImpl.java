@@ -15,18 +15,25 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
-    public User getUser(String username, String password) {
-        User user = userDao.checkPassword(username,password);
+    public User getUser(String email, String password) {
+        User user = userDao.checkPassword(email,password);
         if(user == null)throw new RuntimeException();
         return user;
     }
     @Override
     public String submitFullUser(FullUser fullUser) {
         User user = userDao.getUserByEmail(fullUser.getEmail());
+        String rtString = "Email already exists";
         if(user.getUsername() == "invalid" && user.getId() == -1){
-            return userDao.submitDataBase(fullUser);
+            rtString = userDao.submitDataBase(fullUser);
         }
-        return "Email already exists";
+        return rtString;
+    }
+
+    @Override
+    public FullUser getFullUser(String email) {
+        FullUser fullUser = userDao.getFullUserByEmail(email);
+        return fullUser;
     }
     @Override
     public List<String> getUsernames() {

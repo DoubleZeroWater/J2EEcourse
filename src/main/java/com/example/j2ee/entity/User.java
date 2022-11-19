@@ -2,7 +2,7 @@ package com.example.j2ee.entity;
 
 import io.swagger.annotations.ApiModel;
 
-@ApiModel("User class")
+@ApiModel("User")
 public class User {
     private Integer id;
     private String username;
