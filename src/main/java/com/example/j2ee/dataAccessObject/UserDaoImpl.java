@@ -102,14 +102,22 @@ public class UserDaoImpl implements UserDao
                                                              rs.getString("email"),
                                                              rs.getString("school"),
                                                              rs.getString("password"),
+                                                             rs.getString("isAdmin"),
                                                              rs.getString("code"),
-                                                             rs.getString("name"),
-                                                             rs.getString("isAdmin")
+                                                             rs.getString("name")
                                                      ));
         if (userList.size() == 0)
         {
             return null;
         }
         return userList.get(0);
+    }
+
+    @Override
+    public String resetPasswordByEmail(String email, String password)
+    {
+        String sql = "update user set password = ? where email = ?";
+        jdbcTemplate.update(sql, new Object[]{password, email});
+        return "success";
     }
 }

@@ -23,5 +23,7 @@ public interface UserDao {
     //检查密码
     User checkPassword(String username, String password);
 
+    String resetPasswordByEmail(String email, String password);
+
 //    User submitUser(User user);
 }

@@ -17,10 +17,7 @@ public class UserController {
     @GetMapping("/getUsernames")
     public List<String> getUsernames(HttpSession session){
         //检查是否登录（session是否存在）
-        if(session.getAttribute("user") != null) {
-            return userService.getUsernames();
-        }
-        return Collections.singletonList("你是一个大傻瓜！！！");
+        return null;
     }
 
 }

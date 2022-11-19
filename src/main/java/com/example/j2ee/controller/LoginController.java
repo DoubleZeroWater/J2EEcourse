@@ -109,5 +109,41 @@ public class LoginController
         }
     }
 
+    @ApiOperation("忘记密码")
+    @ApiResponses(
+            {
+                    @ApiResponse(code = 200, message = "Reset password successfully", response = String.class),
+                    @ApiResponse(code = 210, message = "Email not exists", response = String.class),
+                    @ApiResponse(code = 220, message = "Code is incorrect or not match", response = String.class),
+                    @ApiResponse(code = 400, message = "Server Error"),
+            })
+    @PostMapping("/resetPassword")
+    public ResponseEntity resetPassword(@ApiParam(value = "邮箱", required = true) @RequestParam(value = "email") String email,
+                                        @ApiParam(value = "激活码", required = true) @RequestParam(value = "code") String code,
+                                        @ApiParam(value = "新密码", required = true) @RequestParam(value = "newPassword") String newPassword)
+    {
+        //请求转发，会话管理
+        try
+        {
+            String ans = userService.resetPassword(email, newPassword, code);
+            if (ans == "Email not exists")
+            {
+                return ResponseEntity.status(210).body("Email not exists");
+            }
+            else if (ans == "Code is incorrect or not match")
+            {
+                return ResponseEntity.status(220).body("Code is incorrect or not match");
+            }
+            else
+            {
+                return ResponseEntity.status(200).body("Reset password successfully");
+            }
+
+        } catch (RuntimeException e)
+        {
+            return ResponseEntity.status(400).body("Server Error");
+        }
+    }
+
 
 }
