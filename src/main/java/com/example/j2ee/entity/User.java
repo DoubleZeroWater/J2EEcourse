@@ -5,39 +5,46 @@ import io.swagger.annotations.ApiModel;
 @ApiModel("User")
 public class User {
     private Integer id;
-    private String username;
+    private String email;
     private String password;
 
     public User() {
     }
 
-    public User(Integer id, String username, String password) {
+    public User(Integer id, String email, String password)
+    {
         this.id = id;
-        this.username = username;
+        this.email = email;
         this.password = password;
     }
 
-    public Integer getId() {
+    public Integer getId()
+    {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id)
+    {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail()
+    {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email)
+    {
+        this.email = email;
     }
 
-    public String getPassword() {
+    public String getPassword()
+    {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(String password)
+    {
         this.password = password;
     }
 
@@ -48,8 +55,10 @@ public class User {
 
         User user = (User) obj;
 
-        if (id != null ? !id.equals(user.id) : user.id != null) return false;
-        if (username != null ? !username.equals(user.username) : user.username != null) return false;
+        if (id != null ? !id.equals(user.id) : user.id != null)
+            return false;
+        if (email != null ? !email.equals(user.email) : user.email != null)
+            return false;
         return password != null ? password.equals(user.password) : user.password == null;
     }
 }

@@ -38,7 +38,7 @@ public class UserDaoImpl implements UserDao
         List<String> usernameList = new ArrayList<>();
         for (User user : userList)
         {
-            usernameList.add(user.getUsername());
+            usernameList.add(user.getEmail());
         }
         return usernameList;
     }

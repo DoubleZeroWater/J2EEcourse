@@ -54,7 +54,7 @@ public class LoginController
             }
             else
             {
-                session.setAttribute("user", user);
+                session.setAttribute("email", user.getEmail());
                 return ResponseEntity.status(200).body(user);
             }
         } catch (RuntimeException e)
@@ -143,7 +143,7 @@ public class LoginController
         {
             return ResponseEntity.status(400).body("Server Error");
         }
-    }
 
+    }
 
 }

@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService
     {
         User user = userDao.getUserByEmail(fullUser.getEmail());
         String rtString = "Email already exists";
-        if (user.getUsername() == "invalid" && user.getId() == -1)
+        if (user.getEmail() == "invalid" && user.getId() == -1)
         {
             rtString = userDao.submitDataBase(fullUser);
         }
