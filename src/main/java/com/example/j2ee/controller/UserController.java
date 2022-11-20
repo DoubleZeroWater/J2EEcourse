@@ -6,6 +6,7 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpSession;
 
@@ -33,13 +34,13 @@ public class UserController
     public ResponseEntity getFullUserInfo(
             @ApiParam(value = "需要用户登录,session验证", required = true) @PathVariable String email)
     {
-        if (session.getAttribute("email") == null)
+        if (session.getAttribute("email") == email)
         {
-            return ResponseEntity.status(403).body("Not login");
+            return ResponseEntity.status(200).body(userService.getFullUser(email));
         }
         else
         {
-            return ResponseEntity.status(200).body(userService.getFullUser(email));
+            return ResponseEntity.status(403).body("Not login");
         }
     }
 
@@ -54,11 +55,12 @@ public class UserController
             })
     public ResponseEntity updateFullUserInfo(
             @ApiParam(value = "不能修改姓名，注册码，权限，邮箱", required = true) @RequestBody
-            FullUser fullUser)
+            FullUser fullUser,
+            @ApiIgnore HttpSession session)
     {
         try
         {
-            if (session.getAttribute("email") == null)
+            if (session.getAttribute("email") != fullUser.getEmail())
             {
                 return ResponseEntity.status(403).body("Not login");
             }
