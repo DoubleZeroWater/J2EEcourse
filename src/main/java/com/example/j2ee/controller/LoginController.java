@@ -7,7 +7,6 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpSession;
 import java.util.Objects;
@@ -16,6 +15,12 @@ import java.util.Objects;
 @Api(tags = "登录接口")
 public class LoginController
 {
+    private final HttpSession session;
+
+    public LoginController(HttpSession session)
+    {
+        this.session = session;
+    }
 
     @Autowired
     private UserService userService;
@@ -37,8 +42,7 @@ public class LoginController
             })
     @GetMapping("/login/{email}/{password}")
     public ResponseEntity login(@PathVariable(value = "email", required = true) String email,
-                                @PathVariable(value = "password", required = true) String password,
-                                @ApiIgnore HttpSession session)
+                                @PathVariable(value = "password", required = true) String password)
     {
         User user;
         //请求转发，会话管理
@@ -68,7 +72,7 @@ public class LoginController
     @ApiOperation("注销登录")
     @ApiResponses({@ApiResponse(code = 200, message = "Logout successfully", response = String.class),})
     @GetMapping("/logout")
-    public String logout(@ApiIgnore HttpSession session)
+    public String logout()
     {
         //注销session（在服务器里删除该session）
         session.invalidate();

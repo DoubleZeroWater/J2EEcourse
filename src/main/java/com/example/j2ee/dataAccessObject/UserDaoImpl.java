@@ -120,4 +120,16 @@ public class UserDaoImpl implements UserDao
         jdbcTemplate.update(sql, new Object[]{password, email});
         return "success";
     }
+
+    @Override
+    public int updateFullUser(FullUser fullUser)
+    {
+        String sql = "update user set username = ?, phone = ?, email = ?, school = ?, password = ?, code = ?, name = ?, isAdmin = ? where email = ?";
+        int result = jdbcTemplate.update(sql, new Object[]{
+                fullUser.getUsername(), fullUser.getPhone(), fullUser.getEmail(), fullUser.getSchool(),
+                fullUser.getPassword(), fullUser.getCode(), fullUser.getName(), fullUser.getIsAdmin(),
+                fullUser.getEmail()
+        });
+        return result;
+    }
 }

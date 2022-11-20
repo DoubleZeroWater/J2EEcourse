@@ -57,4 +57,10 @@ public class UserServiceImpl implements UserService
             return "Code is incorrect or not match";
         }
     }
+
+    @Override
+    public int updateFullUserInfo(FullUser fullUser)
+    {
+        return userDao.updateFullUser(fullUser);
+    }
 }

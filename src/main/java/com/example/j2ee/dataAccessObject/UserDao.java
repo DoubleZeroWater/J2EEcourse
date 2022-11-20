@@ -19,11 +19,15 @@ public interface UserDao {
     User getUserByEmail(String username);
 
     FullUser getFullUserByEmail(String username);
+
     String submitDataBase(FullUser user);
+
     //检查密码
     User checkPassword(String username, String password);
 
     String resetPasswordByEmail(String email, String password);
+
+    int updateFullUser(FullUser fullUser);
 
 //    User submitUser(User user);
 }

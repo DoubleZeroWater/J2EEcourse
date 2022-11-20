@@ -3,8 +3,6 @@ package com.example.j2ee.service;
 import com.example.j2ee.entity.FullUser;
 import com.example.j2ee.entity.User;
 
-import java.util.List;
-
 
 public interface UserService
 {
@@ -18,4 +16,6 @@ public interface UserService
 
 
     String resetPassword(String email, String password, String code);
+
+    int updateFullUserInfo(FullUser fullUser);
 }
