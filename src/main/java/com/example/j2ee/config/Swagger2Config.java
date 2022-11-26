@@ -1,4 +1,4 @@
-package com.example.j2ee;
+package com.example.j2ee.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
