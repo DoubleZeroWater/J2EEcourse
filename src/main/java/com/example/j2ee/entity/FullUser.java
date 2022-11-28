@@ -1,29 +1,30 @@
 package com.example.j2ee.entity;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel("FullUser")
-public class FullUser{
-    @ApiModelProperty(name = "id", value = "数据表自增id")
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(name = "FullUser", description = "全部用户信息")
+public class FullUser
+{
+    @Schema(name = "id", description = "数据表自增id")
     public Integer id;
-    @ApiModelProperty(name = "username", value = "用户名")
+    @Schema(name = "username", description = "用户名")
     public String username;
-    @ApiModelProperty(name = "phone", value = "手机号")
+    @Schema(name = "phone", description = "手机号")
     public String phone;
-    @ApiModelProperty(name = "email", value = "邮箱")
+    @Schema(name = "email", description = "邮箱")
     public String email;
-    @ApiModelProperty(name = "school", value = "学校")
+    @Schema(name = "school", description = "学校")
     public String school;
-    @ApiModelProperty(name = "password", value = "密码")
+    @Schema(name = "password", description = "密码")
     public String password;
-    @ApiModelProperty(name = "isAdmin", value = "是否为管理员(是为1，否为0)")
+    @Schema(name = "isAdmin", description = "是否为管理员(是为1，否为0)")
 
     public String isAdmin;
-    @ApiModelProperty(name = "code", value = "激活码")
+    @Schema(name = "code", description = "激活码")
     public String code;
 
-    @ApiModelProperty(name = "name", value = "姓名")
+    @Schema(name = "name", description = "姓名")
     public String name;
     public FullUser() {
     }

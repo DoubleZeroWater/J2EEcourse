@@ -1,85 +1,131 @@
 package com.example.j2ee.controller;
 
+import com.example.j2ee.entity.ActiveCode;
 import com.example.j2ee.entity.FullUser;
 import com.example.j2ee.service.UserService;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
-@Api(tags = "用户接口")
+@Tag(name = "用户接口")
 public class UserController
 {
     private final HttpSession session;
+    @Autowired
+    private UserService userService;
 
     public UserController(HttpSession session)
     {
         this.session = session;
     }
 
-    @Autowired
-    private UserService userService;
-
-    @ApiOperation(value = "用邮件查询用户信息")
+    @Operation(summary = "用邮件查询用户信息", description = "用邮件查询用户信息,需要用户登录,session验证")
     @GetMapping("/getUsernames/{email}")
     @ApiResponses(
             {
-                    @ApiResponse(code = 200, message = "Success", response = FullUser.class),
-                    @ApiResponse(code = 403, message = "Not login"),
+                    @ApiResponse(responseCode = "200", description = "Success"),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
             })
-    public ResponseEntity getFullUserInfo(
-            @ApiParam(value = "需要用户登录,session验证", required = true) @PathVariable String email)
+    public ResponseEntity<FullUser> getFullUserInfo(
+            @PathVariable String email)
     {
-        if (session.getAttribute("email") == email)
+        if (session.getAttribute("email") != null && session.getAttribute("email").equals(email))
         {
             return ResponseEntity.status(200).body(userService.getFullUser(email));
         }
         else
         {
-            return ResponseEntity.status(403).body("Not login");
+            return ResponseEntity.status(403).body(null);
         }
     }
 
-    @ApiOperation(value = "更新用户数据")
+    @Operation(summary = "修改用户信息", description = "需要session验证,不能修改姓名,注册码,权限,邮箱,id")
     @PostMapping("/updateUser")
     @ApiResponses(
             {
-                    @ApiResponse(code = 200, message = "Success", response = String.class),
-                    @ApiResponse(code = 210, message = "Can't find email", response = String.class),
-                    @ApiResponse(code = 403, message = "Not login"),
-                    @ApiResponse(code = 400, message = "Server Error"),
+                    @ApiResponse(responseCode = "200", description = "Success"),
+                    @ApiResponse(responseCode = "210", description = "Can't find email", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
             })
-    public ResponseEntity updateFullUserInfo(
-            @ApiParam(value = "不能修改姓名，注册码，权限，邮箱", required = true) @RequestBody
-            FullUser fullUser,
-            @ApiIgnore HttpSession session)
+    public ResponseEntity<FullUser> updateFullUserInfo(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "This is a json like data, upload the FullUser", required = true)
+                                                       @RequestBody FullUser fullUser)
     {
         try
         {
-            if (session.getAttribute("email") != fullUser.getEmail())
+            if (session.getAttribute("email").equals(fullUser.getEmail()))
             {
-                return ResponseEntity.status(403).body("Not login");
+                return ResponseEntity.status(403).body(null);
             }
             else
             {
                 int result = userService.updateFullUserInfo(fullUser);
                 if (result == 0)
                 {
-                    return ResponseEntity.status(210).body("Can't find email");
+                    return ResponseEntity.status(210).body(null);
                 }
                 else
                 {
-                    return ResponseEntity.status(200).body("Success");
+                    return ResponseEntity.status(200).body(null);
                 }
             }
         } catch (Exception e)
         {
             System.out.println(e);
-            return ResponseEntity.status(400).body("Server Error");
+            return ResponseEntity.status(400).body(null);
+        }
+    }
+
+    @Operation(summary = "增加激活码", description = "只有管理人员才能修改")
+    @PostMapping("/addActivationCode")
+    @ApiResponses(
+            {
+                    @ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+            })
+    public ResponseEntity<Void> addActivationCode(@Parameter(description = "激活码") @RequestParam String code,
+                                                  @Parameter(description = "真实姓名") @RequestParam String name,
+                                                  @Parameter(description = "0代表非管理员，1代表管理员") @RequestParam
+                                                  String isAdmin)
+    {
+        if (session.getAttribute("isAdmin") != null && session.getAttribute("isAdmin").equals("1"))
+        {
+            userService.addActiveCode(code, name, isAdmin);
+            return ResponseEntity.status(200).body(null);
+        }
+        else
+        {
+            return ResponseEntity.status(403).body(null);
+        }
+    }
+
+    @Operation(summary = "展示激活码")
+    @GetMapping("/showActivationCode")
+    @ApiResponses(
+            {
+                    @ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+            })
+    public ResponseEntity<List<ActiveCode>> showActivationCode()
+    {
+        if (session.getAttribute("isAdmin") != null && session.getAttribute("isAdmin").equals("1"))
+        {
+            return ResponseEntity.status(200).body(userService.getActiveCode());
+        }
+        else
+        {
+            return ResponseEntity.status(403).body(null);
         }
     }
 }

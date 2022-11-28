@@ -1,8 +1,8 @@
 package com.example.j2ee.entity;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel("User")
+@Schema(name = "User", description = "部分用户信息")
 public class User {
     private Integer id;
     private String email;
