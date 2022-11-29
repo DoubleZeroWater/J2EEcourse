@@ -1,6 +1,5 @@
 package com.example.j2ee.controller;
 
-import com.example.j2ee.entity.ActiveCode;
 import com.example.j2ee.entity.FullUser;
 import com.example.j2ee.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,19 +28,28 @@ public class UserController
         this.session = session;
     }
 
-    @Operation(summary = "用邮件查询用户信息", description = "用邮件查询用户信息,需要用户登录,session验证")
-    @GetMapping("/getUsernames/{email}")
+    @Operation(summary = "用邮件查询用户信息", description = "需要用户自己或者管理员进行查询")
+    @GetMapping("/getUsernames/email={email}")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "Success"),
+                    @ApiResponse(responseCode = "404", description = "Not Found", content = @Content()),
                     @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
             })
     public ResponseEntity<FullUser> getFullUserInfo(
             @PathVariable String email)
     {
-        if (session.getAttribute("email") != null && session.getAttribute("email").equals(email))
+        if (session.getAttribute("email") == null)
         {
-            return ResponseEntity.status(200).body(userService.getFullUser(email));
+            return ResponseEntity.status(403).body(null);
+        }
+        else if (session.getAttribute("isAdmin").equals("1"))
+        {
+            return ResponseEntity.status(200).body(userService.getFullUserByEmail(email));
+        }
+        else if (session.getAttribute("email").equals(email))
+        {
+            return ResponseEntity.status(200).body(userService.getFullUserByEmail(email));
         }
         else
         {
@@ -49,7 +57,36 @@ public class UserController
         }
     }
 
-    @Operation(summary = "修改用户信息", description = "需要session验证,不能修改姓名,注册码,权限,邮箱,id")
+    @Operation(summary = "用姓名查询用户信息", description = "需要用户自己或者管理员进行查询")
+    @GetMapping("/getUsernames/name={name}")
+    @ApiResponses(
+            {
+                    @ApiResponse(responseCode = "200", description = "Success"),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+            })
+    public ResponseEntity<FullUser> getFullUserInfoByName(
+            @PathVariable String name)
+    {
+        if (session.getAttribute("email") == null)
+        {
+            return ResponseEntity.status(403).body(null);
+        }
+        else if (session.getAttribute("isAdmin").equals("1"))
+        {
+            return ResponseEntity.status(200).body(userService.getFullUserByName(name));
+        }
+        else if (session.getAttribute("email").equals(userService.getFullUserByName(name).getEmail()))
+        {
+            return ResponseEntity.status(200).body(userService.getFullUserByName(name));
+        }
+        else
+        {
+            return ResponseEntity.status(403).body(null);
+        }
+    }
+
+
+    @Operation(summary = "修改用户信息", description = "需要用户或者管理员修改，不要修改注册码,权限,邮箱,id")
     @PostMapping("/updateUser")
     @ApiResponses(
             {
@@ -59,17 +96,22 @@ public class UserController
                     @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
             })
     public ResponseEntity<FullUser> updateFullUserInfo(@io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "This is a json like data, upload the FullUser", required = true)
+            description = "这是一个类似JSON的一个类，根据邮箱索引，其中id与isAdmin与Code的值无效，可以随意填写",
+            required = true)
                                                        @RequestBody FullUser fullUser)
     {
         try
         {
-            if (session.getAttribute("email").equals(fullUser.getEmail()))
+            if (session.getAttribute("email") == null)
             {
                 return ResponseEntity.status(403).body(null);
             }
-            else
+            else if (session.getAttribute("isAdmin").equals("1"))
             {
+                fullUser.setIsAdmin(userService.getFullUserByEmail(fullUser.getEmail()).getIsAdmin());
+                fullUser.setId(userService.getFullUserByEmail(fullUser.getEmail()).getId());
+                fullUser.setCode(userService.getFullUserByEmail(fullUser.getEmail()).getCode());
+                fullUser.setEmail(userService.getFullUserByEmail(fullUser.getEmail()).getEmail());
                 int result = userService.updateFullUserInfo(fullUser);
                 if (result == 0)
                 {
@@ -77,8 +119,28 @@ public class UserController
                 }
                 else
                 {
-                    return ResponseEntity.status(200).body(null);
+                    return ResponseEntity.status(200).body(fullUser);
                 }
+            }
+            else if (session.getAttribute("email").equals(fullUser.getEmail()))
+            {
+                fullUser.setIsAdmin(userService.getFullUserByEmail(fullUser.getEmail()).getIsAdmin());
+                fullUser.setId(userService.getFullUserByEmail(fullUser.getEmail()).getId());
+                fullUser.setCode(userService.getFullUserByEmail(fullUser.getEmail()).getCode());
+                fullUser.setEmail(userService.getFullUserByEmail(fullUser.getEmail()).getEmail());
+                int result = userService.updateFullUserInfo(fullUser);
+                if (result == 0)
+                {
+                    return ResponseEntity.status(210).body(null);
+                }
+                else
+                {
+                    return ResponseEntity.status(200).body(fullUser);
+                }
+            }
+            else
+            {
+                return ResponseEntity.status(403).body(null);
             }
         } catch (Exception e)
         {
@@ -87,22 +149,19 @@ public class UserController
         }
     }
 
-    @Operation(summary = "增加激活码", description = "只有管理人员才能修改")
-    @PostMapping("/addActivationCode")
+
+    @Operation(summary = "显示所有用户", description = "仅管理员可以查询")
+    @GetMapping("/showAllUser")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "OK"),
                     @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
             })
-    public ResponseEntity<Void> addActivationCode(@Parameter(description = "激活码") @RequestParam String code,
-                                                  @Parameter(description = "真实姓名") @RequestParam String name,
-                                                  @Parameter(description = "0代表非管理员，1代表管理员") @RequestParam
-                                                  String isAdmin)
+    public ResponseEntity<List<FullUser>> showAllUser()
     {
         if (session.getAttribute("isAdmin") != null && session.getAttribute("isAdmin").equals("1"))
         {
-            userService.addActiveCode(code, name, isAdmin);
-            return ResponseEntity.status(200).body(null);
+            return ResponseEntity.status(200).body(userService.getAllUsers());
         }
         else
         {
@@ -110,22 +169,40 @@ public class UserController
         }
     }
 
-    @Operation(summary = "展示激活码")
-    @GetMapping("/showActivationCode")
+    @Operation(summary = "删除用户", description = "仅管理员或用户自己可以删除")
+    @DeleteMapping("/deleteUser")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "OK"),
-                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "404", description = "Not Found"),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized"),
             })
-    public ResponseEntity<List<ActiveCode>> showActivationCode()
+    public ResponseEntity<Void> deleteUser(@Parameter(description = "用户邮箱") @RequestParam String email)
     {
+        int rt = -1;
         if (session.getAttribute("isAdmin") != null && session.getAttribute("isAdmin").equals("1"))
         {
-            return ResponseEntity.status(200).body(userService.getActiveCode());
+            rt = userService.deleteUser(email);
         }
-        else
+        else if (session.getAttribute("email") != null && session.getAttribute("email").equals(email))
+        {
+            session.invalidate();
+            rt = userService.deleteUser(email);
+        }
+
+        if (rt == -1)
         {
             return ResponseEntity.status(403).body(null);
         }
+        else if (rt == 0)
+        {
+            return ResponseEntity.status(404).body(null);
+        }
+        else
+        {
+            return ResponseEntity.status(200).body(null);
+        }
     }
+
+
 }

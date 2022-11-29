@@ -1,8 +1,6 @@
 package com.example.j2ee.service;
 
-import com.example.j2ee.dataAccessObject.ActiveCodeDao;
 import com.example.j2ee.dataAccessObject.UserDao;
-import com.example.j2ee.entity.ActiveCode;
 import com.example.j2ee.entity.FullUser;
 import com.example.j2ee.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +13,7 @@ public class UserService
 {
     @Autowired
     private UserDao userDao;
-    @Autowired
-    private ActiveCodeDao activeCodeDao;
+
 
     public User getUser(String email, String password)
     {
@@ -37,11 +34,17 @@ public class UserService
         return rtString;
     }
 
-    public FullUser getFullUser(String email)
+    public FullUser getFullUserByEmail(String email)
     {
         FullUser fullUser = userDao.getFullUserByEmail(email);
         return fullUser;
     }
+
+    public FullUser getFullUserByName(String name)
+    {
+        return userDao.getFullUserByNameDao(name);
+    }
+
 
     public String resetPassword(String email, String password, String code)
     {
@@ -64,13 +67,14 @@ public class UserService
         return userDao.updateFullUser(fullUser);
     }
 
-    public int addActiveCode(String code, String name, String isAdmin)
+    public List<FullUser> getAllUsers()
     {
-        return activeCodeDao.addActiveCodeDao(code, name, isAdmin);
+        return userDao.getAllUsersDao();
     }
 
-    public List<ActiveCode> getActiveCode()
+    public int deleteUser(String email)
     {
-        return activeCodeDao.getActiveCodeListDao();
+        return userDao.deleteUserByEmailDao(email);
     }
+
 }

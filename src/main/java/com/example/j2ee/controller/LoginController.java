@@ -57,7 +57,7 @@ public class LoginController
             else
             {
                 session.setAttribute("email", user.getEmail());
-                session.setAttribute("isAdmin", userService.getFullUser(user.getEmail()).getIsAdmin());
+                session.setAttribute("isAdmin", userService.getFullUserByEmail(user.getEmail()).getIsAdmin());
                 return ResponseEntity.status(200).body(user);
             }
         } catch (RuntimeException e)
@@ -85,7 +85,7 @@ public class LoginController
                             responseCode = "220", description = "Code is incorrect or not match", content = @Content()),
                     @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
             })
-    @PostMapping("/register")
+    @PutMapping("/register")
     public ResponseEntity<FullUser> register(@Parameter(description = "nick name") @RequestParam String username,
                                              @RequestParam String phone,
                                              @RequestParam String email,
@@ -109,7 +109,7 @@ public class LoginController
             }
             else
             {
-                FullUser rtFullUser = userService.getFullUser(fullUser.getEmail());
+                FullUser rtFullUser = userService.getFullUserByEmail(fullUser.getEmail());
                 return ResponseEntity.status(200).body(rtFullUser);
             }
 

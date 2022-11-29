@@ -24,8 +24,38 @@ public class ChannelDao
                                                        rs.getString("creator"),
                                                        rs.getString("creatorEmail"),
                                                        rs.getInt("score"),
-                                                       rs.getDate("due")
+                                                       rs.getTimestamp("due").toLocalDateTime()
                                                ));
         return lst;
+    }
+
+    public int getChannelIdByNameDao(String name)
+    {
+        String sql = "select * from channel where name = ?";
+        List<Channel> lst = jdbcTemplate.query(sql, new Object[]{name},
+                                               (rs, rowNum) -> new Channel(
+                                                       rs.getInt("id"),
+                                                       rs.getString("name"),
+                                                       rs.getString("type"),
+                                                       rs.getString("creator"),
+                                                       rs.getString("creatorEmail"),
+                                                       rs.getInt("score"),
+                                                       rs.getTimestamp("due").toLocalDateTime()
+                                               ));
+        if (lst.size() == 0)
+        {
+            return 0;
+        }
+        return lst.get(0).getId();
+    }
+
+    public Channel updateChannel(Channel channel)
+    {
+        String sql = "update channel set name = ?, type = ?, creator = ?, creatorEmail = ?, score = ?, due = ? where id = ?";
+        jdbcTemplate.update(sql, new Object[]{
+                channel.getName(), channel.getType(), channel.getCreator(), channel.getCreatorEmail(),
+                channel.getScore(), channel.getDue(), channel.getId()
+        });
+        return channel;
     }
 }

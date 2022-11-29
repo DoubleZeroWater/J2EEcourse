@@ -101,4 +101,51 @@ public class UserDao
         });
         return result;
     }
+
+    public List<FullUser> getAllUsersDao()
+    {
+        String sql = "select * from user";
+        List<FullUser> userList = jdbcTemplate.query(sql, new Object[]{},
+                                                     (rs, rowNum) -> new FullUser(
+                                                             rs.getInt("id"),
+                                                             rs.getString("username"),
+                                                             rs.getString("phone"),
+                                                             rs.getString("email"),
+                                                             rs.getString("school"),
+                                                             rs.getString("password"),
+                                                             rs.getString("isAdmin"),
+                                                             rs.getString("code"),
+                                                             rs.getString("name")
+                                                     ));
+        return userList;
+    }
+
+    public int deleteUserByEmailDao(String email)
+    {
+        String sql = "delete from user where email = ?";
+        int result = jdbcTemplate.update(sql, new Object[]{email});
+        return result;
+    }
+
+    public FullUser getFullUserByNameDao(String name)
+    {
+        String sql = "select * from user where name = ?";
+        List<FullUser> fullUserList = jdbcTemplate.query(sql,
+                                                         (rs, rowNum) -> new FullUser(
+                                                                 rs.getInt("id"),
+                                                                 rs.getString("username"),
+                                                                 rs.getString("phone"),
+                                                                 rs.getString("email"),
+                                                                 rs.getString("school"),
+                                                                 rs.getString("password"),
+                                                                 rs.getString("isAdmin"),
+                                                                 rs.getString("code"),
+                                                                 rs.getString("name")
+                                                         ), name);
+        if (fullUserList.size() == 0)
+        {
+            return null;
+        }
+        return fullUserList.get(0);
+    }
 }

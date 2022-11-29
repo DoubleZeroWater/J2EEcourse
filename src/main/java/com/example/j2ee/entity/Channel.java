@@ -1,9 +1,13 @@
 package com.example.j2ee.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Schema(name = "Channel", description = "通道信息")
 public class Channel
 {
@@ -11,7 +15,7 @@ public class Channel
     private int id;
     @Schema(name = "name", description = "通道名称")
     private String name;
-    @Schema(name = "type", description = "通道类型(T代表论文通道，P代表项目通道)", allowableValues = "T,P")
+    @Schema(name = "type", description = "通道类型(Thesis代表论文通道，Project代表项目通道)")
     private String type;
     @Schema(name = "creator", description = "创建者")
     private String creator;
@@ -20,13 +24,14 @@ public class Channel
     @Schema(name = "score", description = "对应得分")
     private int score;
     @Schema(name = "due", description = "截止时间")
-    private Date due;
+    private LocalDateTime due;
 
     public Channel()
     {
+        this.id = 0;
     }
 
-    public Channel(int id, String name, String type, String creator, String creatorEmail, int score, Date due)
+    public Channel(int id, String name, String type, String creator, String creatorEmail, int score, LocalDateTime due)
     {
         this.id = id;
         this.name = name;
@@ -37,75 +42,8 @@ public class Channel
         this.due = due;
     }
 
-    public int getId()
+    public enum ChannelType
     {
-        return id;
+        Thesis, Project
     }
-
-    public void setId(int id)
-    {
-        this.id = id;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public String getType()
-    {
-        return type;
-    }
-
-    public void setType(String type)
-    {
-        this.type = type;
-    }
-
-    public String getCreator()
-    {
-        return creator;
-    }
-
-    public void setCreator(String creator)
-    {
-        this.creator = creator;
-    }
-
-    public String getCreatorEmail()
-    {
-        return creatorEmail;
-    }
-
-    public void setCreatorEmail(String creatorEmail)
-    {
-        this.creatorEmail = creatorEmail;
-    }
-
-    public int getScore()
-    {
-        return score;
-    }
-
-    public void setScore(int score)
-    {
-        this.score = score;
-    }
-
-    public Date getDue()
-    {
-        return due;
-    }
-
-    public void setDue(Date due)
-    {
-        this.due = due;
-    }
-
-
 }
