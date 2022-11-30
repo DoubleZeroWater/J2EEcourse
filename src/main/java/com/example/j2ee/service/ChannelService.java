@@ -28,4 +28,14 @@ public class ChannelService
         }
         return channelDao.updateChannel(channel);
     }
+
+    public Channel getChannelByName(String name)
+    {
+        return channelDao.getChannelByNameDao(name);
+    }
+
+    public int addChannel(Channel channel)
+    {
+        return channelDao.addChannel(channel);
+    }
 }

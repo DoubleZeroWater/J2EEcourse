@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -15,7 +15,9 @@ public class Channel
     private int id;
     @Schema(name = "name", description = "通道名称")
     private String name;
-    @Schema(name = "type", description = "通道类型(Thesis代表论文通道，Project代表项目通道)")
+    @Schema(
+            name = "type", description = "通道类型(Thesis代表论文通道，Project代表项目通道)",
+            allowableValues = "Thesis,Project")
     private String type;
     @Schema(name = "creator", description = "创建者")
     private String creator;
@@ -24,14 +26,14 @@ public class Channel
     @Schema(name = "score", description = "对应得分")
     private int score;
     @Schema(name = "due", description = "截止时间")
-    private LocalDateTime due;
+    private Timestamp due;
 
     public Channel()
     {
         this.id = 0;
     }
 
-    public Channel(int id, String name, String type, String creator, String creatorEmail, int score, LocalDateTime due)
+    public Channel(int id, String name, String type, String creator, String creatorEmail, int score, Timestamp due)
     {
         this.id = id;
         this.name = name;
