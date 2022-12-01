@@ -89,18 +89,19 @@ public class ChannelController
                                                  Channel.ChannelType type,
                                                  @Parameter(description = "通道创建者") @RequestParam String creator,
                                                  @Parameter(description = "通道创建者邮箱") @RequestParam
-                                                 String creatorEmail,
+                                                     String creatorEmail,
                                                  @Parameter(description = "通道得分") @RequestParam int score,
                                                  @Parameter(description = "通道截止时间(yyyy-MM-dd HH:mm:ss)")
-                                                 @RequestParam
-                                                 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-                                                 Timestamp due)
+                                                     @RequestParam
+                                                     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+                                                     Timestamp due,
+                                                 @Parameter(description = "通道ID") @RequestParam int id)
     {
         try
         {
             if (session.getAttribute("isAdmin") != null && session.getAttribute("isAdmin").equals("1"))
             {
-                Channel tmpChannel = new Channel(0, name, type.toString(), creator, creatorEmail, score, due);
+                Channel tmpChannel = new Channel(id, name, type.toString(), creator, creatorEmail, score, due);
                 Channel rtChannel = channelService.updateChannel(tmpChannel);
                 if (rtChannel.getId() == 0)
                 {

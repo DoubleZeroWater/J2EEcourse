@@ -20,12 +20,6 @@ public class ChannelService
 
     public Channel updateChannel(Channel channel)
     {
-        int id = channelDao.getChannelIdByNameDao(channel.getName());
-        channel.setId(id);
-        if (id == 0)
-        {
-            return new Channel();
-        }
         return channelDao.updateChannel(channel);
     }
 
