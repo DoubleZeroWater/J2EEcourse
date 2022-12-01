@@ -72,4 +72,20 @@ public class ChannelDao
         return lst.get(0);
     }
 
+    public Channel getChannelByIdDao(int id)
+    {
+        String sql = "select * from channel where id = ?";
+        List<Channel> lst = jdbcTemplate.query(sql,
+                                               (rs, rowNum) -> new Channel(rs.getInt("id"), rs.getString("name"),
+                                                                           rs.getString("type"),
+                                                                           rs.getString("creator"),
+                                                                           rs.getString("creatorEmail"),
+                                                                           rs.getInt("score"), rs.getTimestamp("due")),
+                                               id);
+        if (lst.size() == 0)
+        {
+            return null;
+        }
+        return lst.get(0);
+    }
 }

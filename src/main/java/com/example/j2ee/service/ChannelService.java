@@ -32,4 +32,9 @@ public class ChannelService
     {
         return channelDao.addChannel(channel);
     }
+
+    public Channel getChannelById(int id)
+    {
+        return channelDao.getChannelByIdDao(id);
+    }
 }

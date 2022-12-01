@@ -75,7 +75,7 @@ public class ChannelController
         }
     }
 
-    @Operation(summary = "更新通道信息", description = "根据通道名称更新通道信息，可以更新除了id以外的所有信息")
+    @Operation(summary = "更新通道信息", description = "根据通道ID更新通道信息，可以更新除了ID以外的所有信息")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "OK"),
@@ -84,18 +84,19 @@ public class ChannelController
                     @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
             })
     @PostMapping("/updateChannel")
-    public ResponseEntity<Channel> updateChannel(@Parameter(description = "通道名称") @RequestParam String name,
+    public ResponseEntity<Channel> updateChannel(@Parameter(description = "通道ID") @RequestParam int id,
+                                                 @Parameter(description = "通道名称") @RequestParam String name,
                                                  @Parameter(description = "通道类型") @RequestParam
                                                  Channel.ChannelType type,
                                                  @Parameter(description = "通道创建者") @RequestParam String creator,
                                                  @Parameter(description = "通道创建者邮箱") @RequestParam
-                                                     String creatorEmail,
+                                                 String creatorEmail,
                                                  @Parameter(description = "通道得分") @RequestParam int score,
                                                  @Parameter(description = "通道截止时间(yyyy-MM-dd HH:mm:ss)")
-                                                     @RequestParam
-                                                     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-                                                     Timestamp due,
-                                                 @Parameter(description = "通道ID") @RequestParam int id)
+                                                 @RequestParam
+                                                 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+                                                 Timestamp due
+    )
     {
         try
         {
@@ -166,6 +167,29 @@ public class ChannelController
         {
             return ResponseEntity.status(400).body(null);
         }
+    }
 
+    @Operation(summary = "根据通道ID,获取信息", description = "需要登录")
+    @ApiResponses(
+            {
+                    @ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "404", description = "Not Found", content = @Content()),
+            })
+    @GetMapping("/getChannelById")
+    public ResponseEntity<Channel> getChannelById(@Parameter(description = "通道ID") @RequestParam int id)
+    {
+        if (session.getAttribute("email") != null)
+        {
+            Channel rtChannel = channelService.getChannelById(id);
+            if (rtChannel != null)
+                return ResponseEntity.status(200).body(rtChannel);
+            else
+                return ResponseEntity.status(404).body(null);
+        }
+        else
+        {
+            return ResponseEntity.status(403).body(null);
+        }
     }
 }
