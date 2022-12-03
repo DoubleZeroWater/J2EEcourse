@@ -56,7 +56,7 @@ public class UserDao
         jdbcTemplate.update("delete from activecode where code = ? and name = ?", new Object[]{code, name});
         String sql2 = "insert into user (username, phone, email,school,password,code, name, isAdmin) values (?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql2, new Object[]{
-                fullUser.getUsername(), fullUser.getPassword(), fullUser.getEmail(), fullUser.getSchool(),
+                fullUser.getUsername(), fullUser.getPhone(), fullUser.getEmail(), fullUser.getSchool(),
                 fullUser.getPassword(), fullUser.getCode(), fullUser.getName(), isAdmin.get(0)
         });
         return "success";

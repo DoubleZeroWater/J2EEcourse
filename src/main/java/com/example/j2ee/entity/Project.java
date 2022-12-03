@@ -35,13 +35,15 @@ public class Project
     @Schema(name = "status", description = "项目状态", allowableValues = "Waiting, Accept, Reject")
     private String status;
 
+    @Schema(name = "startTime", description = "开始时间")
+    private int startYear;
 
     public Project()
     {
     }
 
     public Project(String uploaderEmail, String name, String maintainer, int channelId, String description,
-                   String company, int money, Timestamp setTime, String status)
+                   String company, int money, Timestamp setTime, String status, int startYear)
     {
         this.uploaderEmail = uploaderEmail;
         this.name = name;
@@ -52,10 +54,11 @@ public class Project
         this.money = money;
         this.setTime = setTime;
         this.status = status;
+        this.startYear = startYear;
     }
 
     public Project(int id, String uploaderEmail, String name, String maintainer, int channelId, String description,
-                   String company, int money, Timestamp setTime, String status)
+                   String company, int money, Timestamp setTime, String status, int startYear)
     {
         this.id = id;
         this.uploaderEmail = uploaderEmail;
@@ -67,6 +70,7 @@ public class Project
         this.money = money;
         this.setTime = setTime;
         this.status = status;
+        this.startYear = startYear;
     }
 
 

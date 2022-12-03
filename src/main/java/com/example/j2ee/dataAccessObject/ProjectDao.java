@@ -16,10 +16,11 @@ public class ProjectDao
 
     public int uploadProjectDao(Project project, InputStream fig, InputStream file)
     {
-        String sql = "insert into project (`uploaderemail`, `name`, `maintainer`, `channelid`, `description`, `company`, `money`, `submitdate`, `status`, `fig`, `zip`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+         String sql = "insert into project (`uploaderemail`, `name`, `maintainer`, `channelid`, `description`, `company`, `money`, `submitdate`, `status`, `startyear`,`fig`, `zip`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql, project.getUploaderEmail(), project.getName(), project.getMaintainer(),
                                    project.getChannelId(), project.getDescription(), project.getCompany(),
-                                   project.getMoney(), project.getSetTime(), project.getStatus(), fig, file);
+                                   project.getMoney(), project.getSetTime(), project.getStatus(),
+                                   project.getStartYear(), fig, file);
     }
 
     public List<Integer> getIdByNameDao(String name)
@@ -33,32 +34,36 @@ public class ProjectDao
 
         if (isFig == null && isZip == null)
         {
-            String sql = "update project set `uploaderemail` = ?, `name` = ?, `maintainer` = ?, `channelid` = ?, `description` = ?, `company` = ?, `money` = ?, `submitdate` = ?, `status` = ? where id = ?";
+            String sql = "update project set `uploaderemail` = ?, `name` = ?, `maintainer` = ?, `channelid` = ?, `description` = ?, `company` = ?, `money` = ?, `submitdate` = ?, `status` = ? , `startyear` = ? where id = ?";
             jdbcTemplate.update(sql, project.getUploaderEmail(), project.getName(), project.getMaintainer(),
                                 project.getChannelId(), project.getDescription(), project.getCompany(),
-                                project.getMoney(), project.getSetTime(), project.getStatus(), project.getId());
+                                project.getMoney(), project.getSetTime(), project.getStatus(), project.getStartYear(),
+                                project.getId());
 
         }
         else if (isFig == null && isZip != null)
         {
-            String sql = "update project set `uploaderemail` = ?, `name` = ?, `maintainer` = ?, `channelid` = ?, `description` = ?, `company` = ?, `money` = ?, `submitdate` = ?, `status` = ? ,`zip` = ? where id = ?";
+            String sql = "update project set `uploaderemail` = ?, `name` = ?, `maintainer` = ?, `channelid` = ?, `description` = ?, `company` = ?, `money` = ?, `submitdate` = ?, `status` = ? , `startyear` = ? ,`zip` = ? where id = ?";
             jdbcTemplate.update(sql, project.getUploaderEmail(), project.getName(), project.getMaintainer(),
                                 project.getChannelId(), project.getDescription(), project.getCompany(),
-                                project.getMoney(), project.getSetTime(), project.getStatus(), isZip, project.getId());
+                                project.getMoney(), project.getSetTime(), project.getStatus(), project.getStartYear(),
+                                isZip, project.getId());
         }
         else if (isFig != null && isZip == null)
         {
-            String sql = "update project set `uploaderemail` = ?, `name` = ?, `maintainer` = ?, `channelid` = ?, `description` = ?, `company` = ?, `money` = ?, `submitdate` = ?, `status` = ? ,`fig` = ? where id = ?";
+            String sql = "update project set `uploaderemail` = ?, `name` = ?, `maintainer` = ?, `channelid` = ?, `description` = ?, `company` = ?, `money` = ?, `submitdate` = ?, `status` = ? ,`startyear` = ? ,`fig` = ? where id = ?";
             jdbcTemplate.update(sql, project.getUploaderEmail(), project.getName(), project.getMaintainer(),
                                 project.getChannelId(), project.getDescription(), project.getCompany(),
-                                project.getMoney(), project.getSetTime(), project.getStatus(), isFig, project.getId());
+                                project.getMoney(), project.getSetTime(), project.getStatus(), project.getStartYear(),
+                                isFig, project.getId());
         }
         else
         {
-            String sql = "update project set `uploaderemail` = ?, `name` = ?, `maintainer` = ?, `channelid` = ?, `description` = ?, `company` = ?, `money` = ?, `submitdate` = ?, `status` = ? ,`fig` = ?,`zip` = ? where id = ?";
+            String sql = "update project set `uploaderemail` = ?, `name` = ?, `maintainer` = ?, `channelid` = ?, `description` = ?, `company` = ?, `money` = ?, `submitdate` = ?, `status` = ? ,`startyear` = ? ,`fig` = ?,`zip` = ? where id = ?";
             jdbcTemplate.update(sql, project.getUploaderEmail(), project.getName(), project.getMaintainer(),
                                 project.getChannelId(), project.getDescription(), project.getCompany(),
-                                project.getMoney(), project.getSetTime(), project.getStatus(), isFig, isZip,
+                                project.getMoney(), project.getSetTime(), project.getStatus(), project.getStartYear(),
+                                isFig, isZip,
                                 project.getId());
         }
         return 1;
@@ -67,27 +72,25 @@ public class ProjectDao
     public List<Project> getProjectByNameDao(String name)
     {
         String sql = "select * from project where name = ?";
-        return jdbcTemplate.query(sql,
-                                  (rs, rowNum) -> new Project(rs.getInt("id"), rs.getString("uploaderemail"),
-                                                              rs.getString("name"), rs.getString("maintainer"),
-                                                              rs.getInt("channelid"),
-                                                              rs.getString("description"),
-                                                              rs.getString("company"), rs.getInt("money"),
-                                                              rs.getTimestamp("submitdate"),
-                                                              rs.getString("status")), name);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Project(rs.getInt("id"), rs.getString("uploaderemail"),
+                                                                   rs.getString("name"), rs.getString("maintainer"),
+                                                                   rs.getInt("channelid"), rs.getString("description"),
+                                                                   rs.getString("company"), rs.getInt("money"),
+                                                                   rs.getTimestamp("submitdate"),
+                                                                   rs.getString("status"), rs.getInt("startyear")),
+                                  name);
     }
 
     public List<Project> getProjectByEmailDao(String uploaderEmail)
     {
         String sql = "select * from project where uploaderemail = ?";
-        return jdbcTemplate.query(sql,
-                                  (rs, rowNum) -> new Project(rs.getInt("id"), rs.getString("uploaderemail"),
-                                                              rs.getString("name"), rs.getString("maintainer"),
-                                                              rs.getInt("channelid"),
-                                                              rs.getString("description"),
-                                                              rs.getString("company"), rs.getInt("money"),
-                                                              rs.getTimestamp("submitdate"),
-                                                              rs.getString("status")), uploaderEmail);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Project(rs.getInt("id"), rs.getString("uploaderemail"),
+                                                                   rs.getString("name"), rs.getString("maintainer"),
+                                                                   rs.getInt("channelid"), rs.getString("description"),
+                                                                   rs.getString("company"), rs.getInt("money"),
+                                                                   rs.getTimestamp("submitdate"),
+                                                                   rs.getString("status"), rs.getInt("startyear")),
+                                  uploaderEmail);
     }
 
     public InputStream getFigDao(int id)
@@ -118,5 +121,22 @@ public class ProjectDao
     {
         String sql = "delete from project where id = ?";
         return jdbcTemplate.update(sql, id);
+    }
+
+    public List<Project> getAllProjectDao()
+    {
+        String sql = "select * from project";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Project(rs.getInt("id"), rs.getString("uploaderemail"),
+                                                                   rs.getString("name"), rs.getString("maintainer"),
+                                                                   rs.getInt("channelid"), rs.getString("description"),
+                                                                   rs.getString("company"), rs.getInt("money"),
+                                                                   rs.getTimestamp("submitdate"),
+                                                                   rs.getString("status"), rs.getInt("startyear")));
+    }
+
+    public int isExistDao(int id)
+    {
+        String sql = "select count(*) from project where id = ?";
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("count(*)"), id);
     }
 }

@@ -20,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -49,11 +51,12 @@ public class ProjectController
                                               @Parameter(description = "负责人") @RequestParam String maintainer,
                                               @Parameter(description = "通道ID") @RequestParam int channelId,
                                               @Parameter(description = "项目描述") @RequestParam String description,
-                                              @Parameter(description = "所属机构") @RequestParam String company,
+                                              @Parameter(description = "负责单位") @RequestParam String company,
                                               @Parameter(description = "金额") @RequestParam int money,
                                               @Parameter(description = "上传时间(yyyy-MM-dd HH:mm:ss)")
-                                              @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-                                              @RequestParam Timestamp setTime,
+                                                  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+                                                  @RequestParam Timestamp setTime,
+                                              @Parameter(description = "项目开始时间") @RequestParam int startYear,
                                               @Parameter(description = "截图(<16MB)") @RequestPart MultipartFile fig,
                                               @Parameter(description = "Zip(<4GB)") @RequestPart MultipartFile zip)
     {
@@ -65,7 +68,7 @@ public class ProjectController
                 InputStream isFig = fig.getInputStream();
                 InputStream isZip = zip.getInputStream();
                 Project project = new Project(uploaderEmail, name, maintainer, channelId, description, company, money,
-                                              setTime, "Waiting");
+                                              setTime, "Waiting", startYear);
                 projectService.uploadProject(project, isFig, isZip);
                 return ResponseEntity.status(200).body(null);
             } catch (Exception e)
@@ -91,19 +94,22 @@ public class ProjectController
                                               @Parameter(description = "负责人") @RequestParam String maintainer,
                                               @Parameter(description = "项目描述") @RequestParam String description,
                                               @Parameter(description = "所属通道id") @RequestParam int channelId,
-                                              @Parameter(description = "所属机构") @RequestParam String company,
+                                              @Parameter(description = "负责单位") @RequestParam String company,
                                               @Parameter(description = "金额") @RequestParam int money,
                                               @Parameter(description = "上传时间(yyyy-MM-dd HH:mm:ss)")
-                                              @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-                                              @RequestParam Timestamp setTime,
+                                                  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+                                                  @RequestParam Timestamp setTime,
+                                              @Parameter(description = "项目开始时间") @RequestParam int startYear,
                                               @Parameter(description = "截图(<16MB)", required = false)
-                                              @RequestPart(required = false) MultipartFile fig,
+                                                  @RequestPart(required = false) MultipartFile fig,
                                               @Parameter(description = "Zip(<4GB)", required = false)
-                                              @RequestPart(required = false) MultipartFile zip)
+                                                  @RequestPart(required = false) MultipartFile zip)
     {
         if (session.getAttribute("email") == null)
             return ResponseEntity.status(403).body(null);
-        else if (session.getAttribute("email").equals(uploaderEmail))
+        else if (session.getAttribute("isAdmin") == null)
+            return ResponseEntity.status(403).body(null);
+        else if (session.getAttribute("email").equals(uploaderEmail) || session.getAttribute("isAdmin").equals("1"))
             try
             {
                 InputStream isFig;
@@ -119,7 +125,7 @@ public class ProjectController
                     isZip = zip.getInputStream();
                 Project project = new Project(id, uploaderEmail, name, maintainer, channelId, description, company,
                                               money, setTime,
-                                              "Waiting");
+                                              "Waiting", startYear);
                 if (projectService.updateProject(project, isFig, isZip) == 0)
                     return ResponseEntity.status(404).body(null);
                 return ResponseEntity.status(200).body(null);
@@ -140,7 +146,7 @@ public class ProjectController
                     @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = @Content()),
             })
-    @GetMapping(value = "/project/query")
+    @GetMapping(value = "/project/queryByUploaderEmail")
     public ResponseEntity<List<Project>> queryProject(@Parameter(description = "项目名称") @RequestParam String name)
     {
         if (session.getAttribute("email") == null)
@@ -167,7 +173,7 @@ public class ProjectController
                     @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = @Content()),
             })
-    @GetMapping(value = "/project/queryByUploader")
+    @GetMapping(value = "/project/queryByName")
     public ResponseEntity<List<Project>> queryProjectByUploader(
             @Parameter(description = "上传者邮箱") @RequestParam String uploaderEmail)
     {
@@ -192,7 +198,7 @@ public class ProjectController
     @ApiResponses(
             {
                     @ApiResponse(
-                            responseCode = "200", description = "OK"),
+                            responseCode = "200", description = "OK", content = @Content(mediaType = "image/*")),
                     @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
                     @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = @Content()),
@@ -224,22 +230,26 @@ public class ProjectController
     @ApiResponses(
             {
                     @ApiResponse(
-                            responseCode = "200", description = "OK"),
+                            responseCode = "200", description = "OK", content = @Content(mediaType = "*/*")),
                     @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
                     @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = @Content()),
             })
     @GetMapping(value = "/project/download/{id}/zip", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> downloadProjectZip(@Parameter(description = "项目id") @PathVariable int id)
+    public ResponseEntity<Resource> downloadProjectZip(
+            @Parameter(description = "项目id") @PathVariable int id) throws UnsupportedEncodingException
     {
         if (session.getAttribute("email") == null)
             return ResponseEntity.status(403).body(null);
+        else if (projectService.isExist(id) == 0)
+            return ResponseEntity.status(404).body(null);
         else if (session.getAttribute("isAdmin").equals("1") || session.getAttribute("email")
                 .equals(projectService.getProjectEmailById(id)))
         {
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.add("Content-Disposition",
-                                "attachment; filename=" + projectService.getProjectNameById(id) + ".zip");
+                                "attachment; filename=" + URLEncoder.encode(projectService.getProjectNameById(id),
+                                                                            "UTF-8") + ".zip");
             try
             {
                 InputStream zip = projectService.getZip(id);
@@ -269,6 +279,8 @@ public class ProjectController
     {
         if (session.getAttribute("email") == null)
             return ResponseEntity.status(403).body(null);
+        else if (projectService.isExist(id) == 0)
+            return ResponseEntity.status(404).body(null);
         else if (session.getAttribute("isAdmin").equals("1") || session.getAttribute("email")
                 .equals(projectService.getProjectEmailById(id)))
         {
@@ -283,6 +295,31 @@ public class ProjectController
                 return ResponseEntity.status(400).body(null);
             }
         }
+        else
+            return ResponseEntity.status(403).body(null);
+    }
+
+    @Operation(summary = "获取所有项目，管理员可以使用")
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+            })
+    @GetMapping(value = "/project/queryAll")
+    public ResponseEntity<List<Project>> queryAll()
+    {
+        if (session.getAttribute("email") == null)
+            return ResponseEntity.status(403).body(null);
+        else if (session.getAttribute("isAdmin").equals("1"))
+            try
+            {
+                return ResponseEntity.status(200).body(projectService.getAllProject());
+            } catch (Exception e)
+            {
+                return ResponseEntity.status(400).body(null);
+            }
         else
             return ResponseEntity.status(403).body(null);
     }

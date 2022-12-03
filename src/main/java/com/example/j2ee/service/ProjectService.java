@@ -59,4 +59,15 @@ public class ProjectService
     {
         return projectDao.deleteProjectDao(id);
     }
+
+    public List<Project> getAllProject()
+    {
+        return projectDao.getAllProjectDao();
+    }
+
+    public int isExist(int id)
+    {
+        return projectDao.isExistDao(id);
+    }
+
 }
