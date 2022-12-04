@@ -245,6 +245,40 @@ public class ThesisController
             return ResponseEntity.status(403).body(null);
     }
 
+    @Operation(summary = "查询论文(通过论文id索引)", description = "上传者本人和管理员可以使用")
+    @ApiResponses(
+            {
+                    @ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "404", description = "Not Found", content = @Content()),
+            })
+    @GetMapping(path = "/thesis/queryById")
+    public ResponseEntity<Thesis> getThesisById(@Parameter(description = "论文id") @RequestParam int id)
+    {
+        if (session.getAttribute("email") == null)
+            return ResponseEntity.status(403).body(null);
+        else if (thesisService.isExist(id) == 0)
+            return ResponseEntity.status(404).body(null);
+        else if (session.getAttribute("isAdmin").equals("1") || session.getAttribute("email")
+                .equals(thesisService.queryThesisById(id).getUploaderEmail()))
+        {
+            try
+            {
+                Thesis thesis = thesisService.queryThesisById(id);
+                if (thesis == null)
+                    return ResponseEntity.status(404).body(null);
+                else
+                    return ResponseEntity.status(200).body(thesis);
+            } catch (Exception e)
+            {
+                return ResponseEntity.status(400).body(null);
+            }
+        }
+        else
+            return ResponseEntity.status(403).body(null);
+    }
+
     @Operation(summary = "下载一个论文的Zip", description = "上传者本人和管理员可以使用")
     @ApiResponses(
             {

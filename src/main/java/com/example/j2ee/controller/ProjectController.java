@@ -46,17 +46,18 @@ public class ProjectController
                     @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
             })
     @PutMapping(value = "/project/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadProject(@Parameter(description = "项目名称") @RequestParam String name,
-                                              @Parameter(description = "上传者邮箱") @RequestParam String uploaderEmail,
-                                              @Parameter(description = "负责人") @RequestParam String maintainer,
-                                              @Parameter(description = "通道ID") @RequestParam int channelId,
-                                              @Parameter(description = "项目描述") @RequestParam String description,
-                                              @Parameter(description = "负责单位") @RequestParam String company,
-                                              @Parameter(description = "金额") @RequestParam int money,
-                                              @Parameter(description = "上传时间(yyyy-MM-dd HH:mm:ss)")
-                                                  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-                                                  @RequestParam Timestamp setTime,
-                                              @Parameter(description = "项目开始时间") @RequestParam int startYear,
+    public ResponseEntity<Project> uploadProject(@Parameter(description = "项目名称") @RequestParam String name,
+                                                 @Parameter(description = "上传者邮箱") @RequestParam
+                                                 String uploaderEmail,
+                                                 @Parameter(description = "负责人") @RequestParam String maintainer,
+                                                 @Parameter(description = "通道ID") @RequestParam int channelId,
+                                                 @Parameter(description = "项目描述") @RequestParam String description,
+                                                 @Parameter(description = "负责单位") @RequestParam String company,
+                                                 @Parameter(description = "金额") @RequestParam int money,
+                                                 @Parameter(description = "上传时间(yyyy-MM-dd HH:mm:ss)")
+                                                 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+                                                 @RequestParam Timestamp setTime,
+                                                 @Parameter(description = "项目开始时间") @RequestParam int startYear,
                                               @Parameter(description = "截图(<16MB)") @RequestPart MultipartFile fig,
                                               @Parameter(description = "Zip(<4GB)") @RequestPart MultipartFile zip)
     {
@@ -146,7 +147,7 @@ public class ProjectController
                     @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = @Content()),
             })
-    @GetMapping(value = "/project/queryByUploaderEmail")
+    @GetMapping(value = "/project/queryByName")
     public ResponseEntity<List<Project>> queryProject(@Parameter(description = "项目名称") @RequestParam String name)
     {
         if (session.getAttribute("email") == null)
@@ -173,7 +174,7 @@ public class ProjectController
                     @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = @Content()),
             })
-    @GetMapping(value = "/project/queryByName")
+    @GetMapping(value = "/project/queryByUploaderEmail")
     public ResponseEntity<List<Project>> queryProjectByUploader(
             @Parameter(description = "上传者邮箱") @RequestParam String uploaderEmail)
     {
@@ -184,6 +185,40 @@ public class ProjectController
             {
                 List<Project> project = projectService.getProjectByEmail(uploaderEmail);
                 if (project.size() == 0)
+                    return ResponseEntity.status(404).body(null);
+                return ResponseEntity.status(200).body(project);
+            } catch (Exception e)
+            {
+                return ResponseEntity.status(400).body(null);
+            }
+        else
+            return ResponseEntity.status(403).body(null);
+    }
+
+    @Operation(summary = "查询一个项目(通过项目id索引)，管理员与上传者可以使用")
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "404", description = "Not Found", content = @Content()),
+            })
+    @GetMapping(value = "/project/queryById")
+    public ResponseEntity<Project> queryProjectById(@Parameter(description = "项目id") @RequestParam int id)
+    {
+        if (session.getAttribute("email") == null)
+            return ResponseEntity.status(403).body(null);
+        else if (projectService.isExist(id) == 0)
+        {
+            return ResponseEntity.status(404).body(null);
+        }
+        else if (session.getAttribute("isAdmin").equals("1") || session.getAttribute("email")
+                .equals(projectService.getProjectById(id).getUploaderEmail()))
+            try
+            {
+                Project project = projectService.getProjectById(id);
+                if (project == null)
                     return ResponseEntity.status(404).body(null);
                 return ResponseEntity.status(200).body(project);
             } catch (Exception e)

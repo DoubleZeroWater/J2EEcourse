@@ -90,4 +90,9 @@ public class ProjectService
     {
         return projectDao.changeStatusDao(id, status);
     }
+
+    public Project getProjectById(int id)
+    {
+        return projectDao.getProjectByIdDao(id);
+    }
 }

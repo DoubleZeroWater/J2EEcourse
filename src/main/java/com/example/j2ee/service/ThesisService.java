@@ -89,4 +89,9 @@ public class ThesisService
     {
         thesisDao.changeStatusDao(id, toString);
     }
+
+    public Thesis queryThesisById(int id)
+    {
+        return thesisDao.queryThesisByIdDao(id);
+    }
 }

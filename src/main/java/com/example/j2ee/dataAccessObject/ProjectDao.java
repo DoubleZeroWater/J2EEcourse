@@ -16,11 +16,12 @@ public class ProjectDao
 
     public int uploadProjectDao(Project project, InputStream fig, InputStream file)
     {
-         String sql = "insert into project (`uploaderemail`, `name`, `maintainer`, `channelid`, `description`, `company`, `money`, `submitdate`, `status`, `startyear`,`fig`, `zip`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "insert into project (`uploaderemail`, `name`, `maintainer`, `channelid`, `description`, `company`, `money`, `submitdate`, `status`, `startyear`,`fig`, `zip`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql, project.getUploaderEmail(), project.getName(), project.getMaintainer(),
                                    project.getChannelId(), project.getDescription(), project.getCompany(),
                                    project.getMoney(), project.getSetTime(), project.getStatus(),
                                    project.getStartYear(), fig, file);
+
     }
 
     public List<Integer> getIdByNameDao(String name)
@@ -144,5 +145,19 @@ public class ProjectDao
     {
         String sql = "update project set status = ? where id = ?";
         return jdbcTemplate.update(sql, status, id);
+    }
+
+    public Project getProjectByIdDao(int id)
+    {
+        String sql = "select * from project where id = ?";
+        return jdbcTemplate.queryForObject(sql,
+                                           (rs, rowNum) -> new Project(rs.getInt("id"), rs.getString("uploaderemail"),
+                                                                       rs.getString("name"), rs.getString("maintainer"),
+                                                                       rs.getInt("channelid"),
+                                                                       rs.getString("description"),
+                                                                       rs.getString("company"), rs.getInt("money"),
+                                                                       rs.getTimestamp("submitdate"),
+                                                                       rs.getString("status"), rs.getInt("startyear")),
+                                           id);
     }
 }

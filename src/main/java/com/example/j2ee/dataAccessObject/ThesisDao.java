@@ -129,4 +129,17 @@ public class ThesisDao
         String sql = "UPDATE thesis SET `status` = ? WHERE id = ?";
         jdbcTemplate.update(sql, toString, id);
     }
+
+    public Thesis queryThesisByIdDao(int id)
+    {
+        String sql = "SELECT * FROM thesis WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new Thesis(rs.getInt("id"), rs.getString("name"),
+                                                                           rs.getString("uploaderEmail"),
+                                                                           rs.getString("maintainer"),
+                                                                           rs.getInt("channelId"),
+                                                                           rs.getString("description"),
+                                                                           rs.getString("company"),
+                                                                           rs.getTimestamp("submitdate"),
+                                                                           rs.getString("status")), id);
+    }
 }
