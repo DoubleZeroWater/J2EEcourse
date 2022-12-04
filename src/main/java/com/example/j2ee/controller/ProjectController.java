@@ -324,5 +324,68 @@ public class ProjectController
             return ResponseEntity.status(403).body(null);
     }
 
+    @Operation(summary = "获得一个用户的总分(根据邮件)", description = "用户本人或管理员可以使用")
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200", description = "OK",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+            })
+    @GetMapping(value = "/project/getScoreByEmail")
+    public ResponseEntity<Integer> getScoreByEmail(@Parameter(description = "用户邮件") @RequestParam String email)
+    {
+        if (session.getAttribute("email") == null)
+            return ResponseEntity.status(403).body(null);
+        else if (session.getAttribute("isAdmin").equals("1") || session.getAttribute("email").equals(email))
+        {
+            try
+            {
+                return ResponseEntity.status(200).body(projectService.getScoreByEmail(email));
+            } catch (Exception e)
+            {
+                return ResponseEntity.status(400).body(null);
+            }
+        }
+        else
+            return ResponseEntity.status(403).body(null);
+    }
+
+    @Operation(summary = "更改项目状态", description = "管理员可以使用")
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+                    @ApiResponse(responseCode = "404", description = "Not Found", content = @Content()),
+            })
+    @PostMapping(value = "/project/changeStatus")
+    public ResponseEntity<Void> changeStatus(@Parameter(description = "项目id") @RequestParam int id,
+                                             @Parameter(description = "项目状态") @RequestParam
+                                             Project.ProjectStatus status)
+    {
+        if (session.getAttribute("email") == null)
+            return ResponseEntity.status(403).body(null);
+        else if (projectService.isExist(id) == 0)
+            return ResponseEntity.status(404).body(null);
+        else if (session.getAttribute("isAdmin").equals("1"))
+        {
+            try
+            {
+                if (projectService.changeStatus(id, status.toString()) == 1)
+                    return ResponseEntity.status(200).body(null);
+                else
+                    return ResponseEntity.status(404).body(null);
+            } catch (Exception e)
+            {
+                return ResponseEntity.status(400).body(null);
+            }
+        }
+        else
+            return ResponseEntity.status(403).body(null);
+    }
+
 
 }

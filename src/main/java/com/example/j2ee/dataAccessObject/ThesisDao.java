@@ -123,4 +123,10 @@ public class ThesisDao
         String sql = "SELECT COUNT(*) FROM thesis WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, id);
     }
+
+    public void changeStatusDao(int id, String toString)
+    {
+        String sql = "UPDATE thesis SET `status` = ? WHERE id = ?";
+        jdbcTemplate.update(sql, toString, id);
+    }
 }

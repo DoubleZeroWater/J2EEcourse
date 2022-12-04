@@ -312,4 +312,63 @@ public class ThesisController
             return ResponseEntity.status(403).body(null);
     }
 
+    @Operation(summary = "获得一个用户的总分(根据邮件)", description = "上传者本人和管理员可以使用")
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200", description = "OK",
+                            content = @Content(mediaType = "application/json")),
+                    @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+            })
+    @GetMapping(path = "/thesis/getScoreByEmail")
+    public ResponseEntity<Integer> getScoreByEmail(@Parameter(description = "用户邮件") @RequestParam String email)
+    {
+        if (session.getAttribute("email") == null)
+            return ResponseEntity.status(403).body(null);
+        else if (session.getAttribute("isAdmin").equals("1") || session.getAttribute("email").equals(email))
+        {
+            try
+            {
+                return ResponseEntity.status(200).body(thesisService.getScoreByEmail(email));
+            } catch (Exception e)
+            {
+                return ResponseEntity.status(400).body(null);
+            }
+        }
+        else
+            return ResponseEntity.status(403).body(null);
+    }
+
+    @Operation(summary = "更改项目状态", description = "管理员可以使用")
+    @ApiResponses(
+            {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content()),
+                    @ApiResponse(responseCode = "400", description = "Server Error", content = @Content()),
+                    @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
+            })
+    @PostMapping(path = "/thesis/changeStatus")
+    public ResponseEntity<Void> changeStatus(@Parameter(description = "论文ID") @RequestParam int id,
+                                             @Parameter(description = "状态") @RequestParam Thesis.ThesisStatus status)
+    {
+        if (session.getAttribute("email") == null)
+            return ResponseEntity.status(403).body(null);
+        else if (thesisService.isExist(id) == 0)
+            return ResponseEntity.status(404).body(null);
+        else if (session.getAttribute("isAdmin").equals("1"))
+        {
+            try
+            {
+                thesisService.changeStatus(id, status.toString());
+                return ResponseEntity.status(200).body(null);
+            } catch (Exception e)
+            {
+                return ResponseEntity.status(400).body(null);
+            }
+        }
+        else
+            return ResponseEntity.status(403).body(null);
+    }
+
+
 }

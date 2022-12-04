@@ -139,4 +139,10 @@ public class ProjectDao
         String sql = "select count(*) from project where id = ?";
         return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("count(*)"), id);
     }
+
+    public int changeStatusDao(int id, String status)
+    {
+        String sql = "update project set status = ? where id = ?";
+        return jdbcTemplate.update(sql, status, id);
+    }
 }

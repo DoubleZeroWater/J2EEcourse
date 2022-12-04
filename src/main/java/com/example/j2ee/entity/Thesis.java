@@ -36,6 +36,11 @@ public class Thesis
     @Schema(name = "status", description = "状态", allowableValues = "Waiting, Accept, Reject")
     private String status;
 
+    public enum ThesisStatus
+    {
+        Waiting, Accept, Reject
+    }
+
     public Thesis()
     {
     }

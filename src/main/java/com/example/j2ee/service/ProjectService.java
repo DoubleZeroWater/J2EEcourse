@@ -1,5 +1,6 @@
 package com.example.j2ee.service;
 
+import com.example.j2ee.dataAccessObject.ChannelDao;
 import com.example.j2ee.dataAccessObject.ProjectDao;
 import com.example.j2ee.entity.Project;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ public class ProjectService
 {
     @Autowired
     private ProjectDao projectDao;
+    @Autowired
+    private ChannelDao channelDao;
 
     public int uploadProject(Project project, InputStream fig, InputStream file)
     {
@@ -70,4 +73,21 @@ public class ProjectService
         return projectDao.isExistDao(id);
     }
 
+    public int getScoreByEmail(String email)
+    {
+        List<Project> projects = projectDao.getProjectByEmailDao(email);
+        int score = 0;
+        for (Project project : projects)
+        {
+            int channel = 0;
+            channel = project.getChannelId();
+            score += channelDao.getChannelByIdDao(channel).getScore();
+        }
+        return score;
+    }
+
+    public int changeStatus(int id, String status)
+    {
+        return projectDao.changeStatusDao(id, status);
+    }
 }
