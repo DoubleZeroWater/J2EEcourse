@@ -38,7 +38,7 @@ public class ProjectController
         this.session = session;
     }
 
-    @Operation(summary = "上传一个项目")
+    @Operation(summary = "上传一个项目", description = "上传者邮箱需要与登陆邮箱一致")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "OK"),
@@ -46,17 +46,17 @@ public class ProjectController
                     @ApiResponse(responseCode = "403", description = "Unauthorized", content = @Content()),
             })
     @PutMapping(value = "/project/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Project> uploadProject(@Parameter(description = "项目名称") @RequestParam String name,
-                                                 @Parameter(description = "上传者邮箱") @RequestParam
-                                                 String uploaderEmail,
-                                                 @Parameter(description = "负责人") @RequestParam String maintainer,
-                                                 @Parameter(description = "通道ID") @RequestParam int channelId,
-                                                 @Parameter(description = "项目描述") @RequestParam String description,
-                                                 @Parameter(description = "负责单位") @RequestParam String company,
-                                                 @Parameter(description = "金额") @RequestParam int money,
-                                                 @Parameter(description = "上传时间(yyyy-MM-dd HH:mm:ss)")
-                                                 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-                                                 @RequestParam Timestamp setTime,
+    public ResponseEntity<Void> uploadProject(@Parameter(description = "项目名称") @RequestParam String name,
+                                              @Parameter(description = "上传者邮箱") @RequestParam
+                                              String uploaderEmail,
+                                              @Parameter(description = "负责人") @RequestParam String maintainer,
+                                              @Parameter(description = "通道ID") @RequestParam int channelId,
+                                              @Parameter(description = "项目描述") @RequestParam String description,
+                                              @Parameter(description = "负责单位") @RequestParam String company,
+                                              @Parameter(description = "金额") @RequestParam int money,
+                                              @Parameter(description = "上传时间(yyyy-MM-dd HH:mm:ss)")
+                                              @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+                                              @RequestParam Timestamp setTime,
                                                  @Parameter(description = "项目开始时间") @RequestParam int startYear,
                                               @Parameter(description = "截图(<16MB)") @RequestPart MultipartFile fig,
                                               @Parameter(description = "Zip(<4GB)") @RequestPart MultipartFile zip)
@@ -80,7 +80,7 @@ public class ProjectController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "更新一个项目(通过项目id索引)")
+    @Operation(summary = "更新一个项目", description = "通过项目ID索引")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "OK"),
@@ -138,7 +138,7 @@ public class ProjectController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "查询一个项目(通过项目名索引)，仅有管理员可以使用")
+    @Operation(summary = "查询项目(通过项目名索引)", description = "返回项目数组，仅有管理员可以使用")
     @ApiResponses(
             {
                     @ApiResponse(
@@ -165,7 +165,7 @@ public class ProjectController
             }
     }
 
-    @Operation(summary = "查询一个项目(通过上传者邮箱索引)，管理员与上传者可以使用")
+    @Operation(summary = "查询项目(通过上传者邮箱索引)", description = "返回项目数组，管理员与上传者可以使用")
     @ApiResponses(
             {
                     @ApiResponse(
@@ -195,7 +195,7 @@ public class ProjectController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "查询一个项目(通过项目id索引)，管理员与上传者可以使用")
+    @Operation(summary = "查询项目(通过项目ID索引)", description = "返回项目，管理员与上传者可以使用")
     @ApiResponses(
             {
                     @ApiResponse(
@@ -229,7 +229,7 @@ public class ProjectController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "下载一个项目的截图，管理员与上传者可以使用")
+    @Operation(summary = "下载一个项目的截图", description = "管理员与上传者可以使用")
     @ApiResponses(
             {
                     @ApiResponse(
@@ -261,7 +261,7 @@ public class ProjectController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "下载一个项目的Zip，管理员与上传者可以使用")
+    @Operation(summary = "下载一个项目的Zip", description = "管理员与上传者可以使用")
     @ApiResponses(
             {
                     @ApiResponse(
@@ -300,7 +300,7 @@ public class ProjectController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "删除一个项目,用户本人以及管理员可以使用")
+    @Operation(summary = "删除一个项目(通过ID索引)", description = "管理员与上传者可以使用")
     @ApiResponses(
             {
                     @ApiResponse(
@@ -334,7 +334,7 @@ public class ProjectController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "获取所有项目，管理员可以使用")
+    @Operation(summary = "获取所有项目", description = "返回项目数组，仅有管理员可以使用")
     @ApiResponses(
             {
                     @ApiResponse(

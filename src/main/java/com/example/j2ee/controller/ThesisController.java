@@ -77,7 +77,7 @@ public class ThesisController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "修改论文", description = "根据论文ID索引，需要上传者本人修改或者管理员修改")
+    @Operation(summary = "修改论文(根据论文ID索引)", description = "需要上传者本人修改或者管理员修改")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "OK"),
@@ -120,7 +120,7 @@ public class ThesisController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "删除论文", description = "根据论文ID索引，需要上传者本人删除或者管理员删除")
+    @Operation(summary = "删除论文(根据论文ID索引)", description = "需要上传者本人删除或者管理员删除")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "OK"),
@@ -151,7 +151,7 @@ public class ThesisController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "查询论文(通过论文名索引)", description = "仅有管理员可以使用")
+    @Operation(summary = "查询论文(通过论文名索引)", description = "返回论文数组，仅有管理员可以使用")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "OK"),
@@ -182,7 +182,7 @@ public class ThesisController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "查询一个论文(通过上传者邮箱索引)", description = "上传者本人和管理员可以使用")
+    @Operation(summary = "查询论文(通过上传者邮箱索引)", description = "返回论文数组，上传者本人和管理员可以使用")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "OK"),
@@ -214,7 +214,7 @@ public class ThesisController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "查询所有论文", description = "仅有管理员可以使用")
+    @Operation(summary = "查询所有论文", description = "返回论文数组，仅有管理员可以使用")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "OK"),
@@ -245,7 +245,7 @@ public class ThesisController
             return ResponseEntity.status(403).body(null);
     }
 
-    @Operation(summary = "查询论文(通过论文id索引)", description = "上传者本人和管理员可以使用")
+    @Operation(summary = "查询论文(通过论文ID索引)", description = "返回论文，上传者本人和管理员可以使用")
     @ApiResponses(
             {
                     @ApiResponse(responseCode = "200", description = "OK"),
