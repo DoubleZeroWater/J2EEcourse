@@ -103,11 +103,22 @@ public class ThesisController
     {
         if (session.getAttribute("email") == null)
             return ResponseEntity.status(403).body(null);
+        else if (thesisService.isExist(thesisId) == 0)
+            return ResponseEntity.status(404).body(null);
         else if (session.getAttribute("email").equals(uploaderEmail))
             try
             {
-                InputStream isFig = fig.getInputStream();
-                InputStream isZip = zip.getInputStream();
+                InputStream isFig;
+                InputStream isZip;
+                if (fig == null)
+                    isFig = null;
+                else
+                    isFig = fig.getInputStream();
+
+                if (zip == null)
+                    isZip = null;
+                else
+                    isZip = zip.getInputStream();
                 Thesis thesis = new Thesis(thesisId, uploaderEmail, name, maintainer, channelId, description, company,
                                            uploadTime, "Waiting");
                 thesisService.updateThesis(thesis, isFig, isZip);
@@ -133,6 +144,8 @@ public class ThesisController
     {
         if (session.getAttribute("email") == null)
             return ResponseEntity.status(403).body(null);
+        else if (thesisService.isExist(id) == 0)
+            return ResponseEntity.status(404).body(null);
         else if (session.getAttribute("isAdmin").equals("1") || session.getAttribute("email")
                 .equals(thesisService.getEmailById(id)))
         {
