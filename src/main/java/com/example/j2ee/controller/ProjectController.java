@@ -55,9 +55,9 @@ public class ProjectController
                                               @Parameter(description = "负责单位") @RequestParam String company,
                                               @Parameter(description = "金额") @RequestParam int money,
                                               @Parameter(description = "上传时间(yyyy-MM-dd HH:mm:ss)")
-                                              @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-                                              @RequestParam Timestamp setTime,
-                                                 @Parameter(description = "项目开始时间") @RequestParam int startYear,
+                                                  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                  @RequestParam Timestamp setTime,
+                                              @Parameter(description = "项目开始时间") @RequestParam int startYear,
                                               @Parameter(description = "截图(<16MB)") @RequestPart MultipartFile fig,
                                               @Parameter(description = "Zip(<4GB)") @RequestPart MultipartFile zip)
     {

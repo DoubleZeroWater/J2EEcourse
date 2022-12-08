@@ -53,8 +53,8 @@ public class ThesisController
                                              @Parameter(description = "论文描述") @RequestParam String description,
                                              @Parameter(description = "负责单位") @RequestParam String company,
                                              @Parameter(description = "上传时间(yyyy-MM-dd HH:mm:ss)")
-                                             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-                                             @RequestParam Timestamp uploadTime,
+                                                 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                 @RequestParam Timestamp uploadTime,
                                              @Parameter(description = "截图(<16MB)") @RequestPart MultipartFile fig,
                                              @Parameter(description = "Zip(<4GB)") @RequestPart MultipartFile zip)
     {
@@ -94,8 +94,8 @@ public class ThesisController
                                              @Parameter(description = "论文描述") @RequestParam String description,
                                              @Parameter(description = "负责单位") @RequestParam String company,
                                              @Parameter(description = "上传时间(yyyy-MM-dd HH:mm:ss)")
-                                             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-                                             @RequestParam Timestamp uploadTime,
+                                                 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                 @RequestParam Timestamp uploadTime,
                                              @Parameter(description = "截图(<16MB)") @RequestPart(required = false)
                                              MultipartFile fig,
                                              @Parameter(description = "Zip(<4GB)") @RequestPart(required = false)

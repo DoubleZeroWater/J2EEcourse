@@ -69,8 +69,8 @@ public class ThesisDao
     public List<Thesis> queryThesisByNameDao(String name)
     {
         String sql = "select * from thesis where name = ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new Thesis(rs.getInt("id"), rs.getString("name"),
-                                                                  rs.getString("uploaderEmail"),
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Thesis(rs.getInt("id"), rs.getString("uploaderEmail"),
+                                                                  rs.getString("name"),
                                                                   rs.getString("maintainer"), rs.getInt("channelId"),
                                                                   rs.getString("description"), rs.getString("company"),
                                                                   rs.getTimestamp("submitdate"),
@@ -80,8 +80,8 @@ public class ThesisDao
     public List<Thesis> queryThesisByUploaderEmailDao(String uploaderEmail)
     {
         String sql = "select * from thesis where uploaderEmail = ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new Thesis(rs.getInt("id"), rs.getString("name"),
-                                                                  rs.getString("uploaderEmail"),
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Thesis(rs.getInt("id"), rs.getString("uploaderEmail"),
+                                                                  rs.getString("name"),
                                                                   rs.getString("maintainer"), rs.getInt("channelId"),
                                                                   rs.getString("description"), rs.getString("company"),
                                                                   rs.getTimestamp("submitdate"),
@@ -92,8 +92,8 @@ public class ThesisDao
     {
         String sql = "select * from thesis";
         return jdbcTemplate.query(sql
-                , (rs, rowNum) -> new Thesis(rs.getInt("id"), rs.getString("name"),
-                                             rs.getString("uploaderEmail"),
+                , (rs, rowNum) -> new Thesis(rs.getInt("id"), rs.getString("uploaderEmail"),
+                                             rs.getString("name"),
                                              rs.getString("maintainer"), rs.getInt("channelId"),
                                              rs.getString("description"), rs.getString("company"),
                                              rs.getTimestamp("submitdate"),
@@ -133,13 +133,14 @@ public class ThesisDao
     public Thesis queryThesisByIdDao(int id)
     {
         String sql = "SELECT * FROM thesis WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new Thesis(rs.getInt("id"), rs.getString("name"),
-                                                                           rs.getString("uploaderEmail"),
-                                                                           rs.getString("maintainer"),
-                                                                           rs.getInt("channelId"),
-                                                                           rs.getString("description"),
-                                                                           rs.getString("company"),
-                                                                           rs.getTimestamp("submitdate"),
-                                                                           rs.getString("status")), id);
+        return jdbcTemplate.queryForObject(sql,
+                                           (rs, rowNum) -> new Thesis(rs.getInt("id"), rs.getString("uploaderEmail"),
+                                                                      rs.getString("name"),
+                                                                      rs.getString("maintainer"),
+                                                                      rs.getInt("channelId"),
+                                                                      rs.getString("description"),
+                                                                      rs.getString("company"),
+                                                                      rs.getTimestamp("submitdate"),
+                                                                      rs.getString("status")), id);
     }
 }

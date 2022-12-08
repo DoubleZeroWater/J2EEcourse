@@ -29,7 +29,7 @@ public class Project
     @Schema(name = "money", description = "金额")
     private int money;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(name = "setTime", description = "上传时间")
     private Timestamp setTime;
     @Schema(name = "status", description = "项目状态", allowableValues = "Waiting, Accept, Reject")
